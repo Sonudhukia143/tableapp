@@ -7,7 +7,8 @@ declare global {
         artist_display: string,
         inscriptions: string | null,
         date_start: string | number,
-        date_end: string | number
+        date_end: string | number,
+        id: number | string
     };
     
     type AuthContextType = {

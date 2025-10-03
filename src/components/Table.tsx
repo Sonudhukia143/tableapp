@@ -44,19 +44,6 @@ const PopUp = () => {
   );
 }
 
-// const loadingTemplate = (options) => {
-//   return (
-//     <div className="flex align-items-center" style={{ height: '1.5rem', flexGrow: 1, overflow: 'hidden' }}>
-//       <Skeleton
-//         width={options.cellEven ? '60%' : '40%'}
-//         height="1rem"
-//       />
-//     </div>
-//   );
-// };
-
-
-
 export default function Table() {
   const [columns, setColumns] = useState<Data[]>([]);
   const { selectedColumns, setSelectedColumns, loading, setLoading, allSelected, setAllSelected } = useContext(AuthContext);
@@ -75,18 +62,7 @@ export default function Table() {
     setLoading(false);
   };
 
-  const fetchData = async () => {
-    setLoading(true);
-    const res = await fetch("https://api.artic.edu/api/v1/artworks?page=1");
-    const data = await res.json();
-    setColumns(data?.data);
-    if (allSelected) {
-      setSelectedColumns(data?.data);
-    }
-    setLoading(false);
-  }
-
-  const onSelectionChange = (e:DataTableSelectionMultipleChangeEvent<Data[]>) => {
+  const onSelectionChange = (e: DataTableSelectionMultipleChangeEvent<Data[]>) => {
     setSelectedColumns(e.value);
     if (e.type == "all") {
       setSelectedColumns(e.value);
@@ -97,8 +73,18 @@ export default function Table() {
   }
 
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await fetch("https://api.artic.edu/api/v1/artworks?page=1");
+      const data = await res.json();
+      setColumns(data?.data);
+      if (allSelected) {
+        setSelectedColumns(data?.data);
+      }
+      setLoading(false);
+    }
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return (
     <div className="card">
@@ -106,7 +92,7 @@ export default function Table() {
         <DataTable<Data[]>
           value={columns}
           selectionMode="multiple"
-          onSelectionChange={(e:DataTableSelectionMultipleChangeEvent<Data[]>) => onSelectionChange(e)}
+          onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<Data[]>) => onSelectionChange(e)}
           dataKey="id"
           tableStyle={{ minWidth: '50rem' }}
           loading={loading}
@@ -120,20 +106,6 @@ export default function Table() {
           <Column field="inscriptions" header="Inscriptions"></Column>
           <Column field="date_start" header="Date Start"></Column>
           <Column field="date_end" header="Date End"></Column>
-          {/* {
-            columns.map((column) => {
-              return (
-                <>
-                  <Column field="title" body={loading?loadingTemplate:column.title}></Column>
-                  <Column field="place_of_origin" body={column.place_of_origin}></Column>
-                  <Column field="artist_display" body={column.artist_display}></Column>
-                  <Column field="inscriptions" body={column.inscriptions}></Column>
-                  <Column field="date_start" body={column.date_start}></Column>
-                  <Column field="date_end" body={column.date_end}></Column>
-                </>
-              );
-            })
-          } */}
         </DataTable>
         <Paginator first={first} rows={12} totalRecords={129752} onPageChange={onPageChange} />
       </>
