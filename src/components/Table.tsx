@@ -7,21 +7,8 @@ import { Paginator, type PaginatorPageChangeEvent } from "primereact/paginator";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { InputNumber, type InputNumberValueChangeEvent } from "primereact/inputnumber";
 import { AuthContext } from "../context/ColumnContext";
-import { ProgressSpinner } from "primereact/progressspinner";
-// import { Skeleton } from "primereact/skeleton";
-// import type { ToggleButtonChangeEvent } from "primereact/togglebutton";
-
-
 
 // proiorities left to be completed 
-// 1. Make sure to add all selection work on all pages 
-// Done Just Re-Check It
-// Problem 1. If one element deselected after selecting all then revisiting doesnot presist deselection
-// sol 1 we could check if the first column is checked on particular page and if not then we donot check it  do it at end
-
-// 2. Make sure to implement popup box on all pages 
-
-// 3. Complete Type Checking in all code
 // 4. Lazy loading untill data loads fully 
 
 const PopUp = () => {
@@ -72,6 +59,7 @@ export default function Table() {
       setSelectedColumns(e.value);
     }
   }
+
 
   useEffect(() => {
     const fetchData = async () => {
