@@ -21,9 +21,11 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     const [numVal, setNumVal] = useState<number>(0);
 
     const selectColumns = async () => {
+        setLoading(true);
         const res = await fetch(`https://api.artic.edu/api/v1/artworks?limit=${numVal}`);
         const data = await res.json();
         setSelectedColumns(data?.data);
+        setLoading(false);
     }
 
     const value = {
