@@ -1,22 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { DataTable } from 'primereact/datatable';
+import { DataTable, type DataTableSelectionMultipleChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
-import { Paginator } from "primereact/paginator";
+import { Paginator, type PaginatorPageChangeEvent } from "primereact/paginator";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { InputNumber } from "primereact/inputnumber";
+import { InputNumber, type InputNumberValueChangeEvent } from "primereact/inputnumber";
 import { AuthContext } from "../context/ColumnContext";
-import { Skeleton } from "primereact/skeleton";
+// import { Skeleton } from "primereact/skeleton";
+// import type { ToggleButtonChangeEvent } from "primereact/togglebutton";
 
-interface Data {
-  title: string,
-  place_of_origin: string,
-  artist_display: string,
-  inscriptions: string,
-  date_start: string,
-  date_end: string
-};
 
 
 // proiorities left to be completed 
@@ -31,36 +24,36 @@ interface Data {
 // 4. Lazy loading untill data loads fully 
 
 const PopUp = () => {
-  const op = useRef(null);
+  const op = useRef<OverlayPanel>(null);
   const { numVal, setNumVal, selectColumns } = useContext(AuthContext);
-  const toggleAndSelect = (e) => {
-    op.current.toggle(e);
+  const toggleAndSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    op.current?.toggle(e);
     selectColumns();
   }
 
   return (
     <>
       <OverlayPanel ref={op}>
-        <InputNumber value={numVal} onValueChange={(e) => setNumVal(e.value)} />
+        <InputNumber value={numVal} onValueChange={(e: InputNumberValueChangeEvent) => setNumVal(Number(e.value))} />
         <div>
           <button style={{ margin: "10px", padding: "5px", cursor: "pointer" }} onClick={(e) => toggleAndSelect(e)}>Submit</button>
         </div>
       </OverlayPanel>
-      <button style={{ border: "0px", cursor: "pointer" }} type="button" onClick={(e) => op.current.toggle(e)}>⬇️</button>
+      <button style={{ border: "0px", cursor: "pointer" }} type="button" onClick={(e) => op.current?.toggle(e)}>⬇️</button>
     </>
   );
 }
 
-const loadingTemplate = (options) => {
-  return (
-    <div className="flex align-items-center" style={{ height: '1.5rem', flexGrow: 1, overflow: 'hidden' }}>
-      <Skeleton
-        width={options.cellEven ? '60%' : '40%'}
-        height="1rem"
-      />
-    </div>
-  );
-};
+// const loadingTemplate = (options) => {
+//   return (
+//     <div className="flex align-items-center" style={{ height: '1.5rem', flexGrow: 1, overflow: 'hidden' }}>
+//       <Skeleton
+//         width={options.cellEven ? '60%' : '40%'}
+//         height="1rem"
+//       />
+//     </div>
+//   );
+// };
 
 
 
@@ -69,7 +62,7 @@ export default function Table() {
   const { selectedColumns, setSelectedColumns, loading, setLoading, allSelected, setAllSelected } = useContext(AuthContext);
   const [first, setFirst] = useState<number>(1);
 
-  const onPageChange = async (event) => {
+  const onPageChange = async (event: PaginatorPageChangeEvent) => {
     setLoading(true);
     setFirst(event.first);
     const page: number = event.page + 1;
@@ -93,7 +86,7 @@ export default function Table() {
     setLoading(false);
   }
 
-  const onSelectionChange = (e) => {
+  const onSelectionChange = (e:DataTableSelectionMultipleChangeEvent<Data[]>) => {
     setSelectedColumns(e.value);
     if (e.type == "all") {
       setSelectedColumns(e.value);
@@ -105,19 +98,19 @@ export default function Table() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <div className="card">
       <>
-        <DataTable
+        <DataTable<Data[]>
           value={columns}
-          selection={selectedColumns}
-          onSelectionChange={(e) => onSelectionChange(e)}
+          selectionMode="multiple"
+          onSelectionChange={(e:DataTableSelectionMultipleChangeEvent<Data[]>) => onSelectionChange(e)}
           dataKey="id"
           tableStyle={{ minWidth: '50rem' }}
           loading={loading}
-          loadingTemplate={loadingTemplate}
+          selection={selectedColumns}
         >
           <Column selectionMode="multiple" header=""></Column>
           <Column header={<PopUp />}></Column>

@@ -1,7 +1,7 @@
 import { useState, type JSX, createContext } from 'react';
 
 const defaultValue = {
-    selectedColumns: 0,
+    selectedColumns: [],
     setSelectedColumns: () => { },
     loading: false,
     setLoading: () => { },
@@ -16,7 +16,7 @@ const AuthContext = createContext<AuthContextType>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [selectedColumns, setSelectedColumns] = useState<number>(0);
+    const [selectedColumns, setSelectedColumns] = useState<Data[]>([]);
     const [allSelected, setAllSelected] = useState<boolean>(false);
     const [numVal, setNumVal] = useState<number>(0);
 
